@@ -14,5 +14,3 @@ jobs:
       - run:
           name: test
           command: npm test
-      - environment:
-          MONGO_URL: "mongodb://localhost:27017/livepoetrytest"
