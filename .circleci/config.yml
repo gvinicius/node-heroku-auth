@@ -5,7 +5,7 @@ jobs:
   build:
     docker:
       - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
-      - image: mongo:3.4.4-jessie
+      - image: circleci/mongo:3.5.13
     steps: # a collection of executable commands
       - checkout # special step to check out source code to working directory
       - run:
