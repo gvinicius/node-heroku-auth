@@ -1,5 +1,7 @@
 # node-auth
 
+This application is jwt auth based on heroku node example, for being used as auth and payload storage for many microservice-architectural apps
+
 Configure install nodemon for hot reload express:
     $ npm install nodemon -g
 
