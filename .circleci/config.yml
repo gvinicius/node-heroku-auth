@@ -14,6 +14,5 @@ jobs:
       - run:
           name: test
           command: npm test
-      - save_cache: # special step to save the dependency cache
-      environment:
-        MONGO_URL: "mongodb://localhost:27017/livepoetrytest"
+      - environment:
+        - MONGO_URL: "mongodb://localhost:27017/livepoetrytest"
