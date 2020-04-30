@@ -15,6 +15,8 @@ testConfig.db = require('./db/db.js');
 testConfig.request = require('supertest');
 testConfig.app = require('./src/app.js');
 
+process.env = { TOKEN_KEY: 'SOME-KEY' };
+
 testConfig.config = function () {
   beforeAll(async () => {
     testConfig.db.start();
