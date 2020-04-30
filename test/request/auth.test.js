@@ -5,32 +5,22 @@
  *
  * Distributed under terms of the MIT license.
  */
-const User = require('./models/user.js');
+const User = require('../../models/user.js');
 
 const currentEnv = process.env;
 const jwt = require('jsonwebtoken');
-
-process.env = { MONGODB_URI: 'mongodb://localhost:27017/livepoetryTest' };
-process.env = { PORT: '5001' };
-process.env = { TOKEN_KEY: 'SOME-KEY' };
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const saltRounds = 10;
 
-const mongoose = require('mongoose');
-
-beforeAll(async () => {
-  await mongoose.connect('mongodb://localhost:27017/livepoetryTest', { useNewUrlParser: true });
-});
-
-const request = require('supertest');
-const app = require('./src/app.js');
-
-const { username, password } = { username: 'someone', password: 'some-pass' };
+const testConfig = require('../../testConfig.js');
+testConfig.config();
+const { username, password } = { username: 'someone', password: 'some-passs' };
 
 describe('When to processes auth to create an user', () => {
   it('should save user to database for not existing user', async (done) => {
-    const res = await request(app).post('/auth').send({
+    const res = await testConfig.request(testConfig.app).post('/auth').send({
       username,
       password
     });
@@ -44,7 +34,7 @@ describe('When to processes auth to create an user', () => {
       User.collection.create({ username, password: hash });
     });
 
-    const res = await request(app).post('/auth').send({
+    const res = await testConfig.request(testConfig.app).post('/auth').send({
       username,
       password
     });
@@ -60,7 +50,7 @@ describe('When to processes auth to create an user', () => {
       User.collection.create({ username, password: someGoodPassword });
     });
 
-    const res = await request(app).post('/auth').send({
+    const res = await testConfig.request(testConfig.app).post('/auth').send({
       username,
       password: someBadPassword
     });
@@ -72,7 +62,7 @@ describe('When to processes auth to create an user', () => {
   it('does not create a user with very short username, less than 6 characters', async (done) => {
     const username = 'tiny';
 
-    const res = await request(app).post('/auth').send({
+    const res = await testConfig.request(testConfig.app).post('/auth').send({
       username,
       password
     });
@@ -84,7 +74,7 @@ describe('When to processes auth to create an user', () => {
   it('does not create a user with very large username, more than 60 characters', async (done) => {
     const username = 'some-large-username-larger-than-60-chars-because-life-is-that';
 
-    const res = await request(app).post('/auth').send({
+    const res = await testConfig.request(testConfig.app).post('/auth').send({
       username,
       password
     });
@@ -96,7 +86,7 @@ describe('When to processes auth to create an user', () => {
 
 describe('When to try to validate an token', () => {
   it('does not auth without any credentials nor the token', async (done) => {
-    const res = await request(app).post('/auth').send({});
+    const res = await testConfig.request(testConfig.app).post('/auth').send({});
     expect(res.statusCode).toBe(401);
     done();
   });
@@ -104,7 +94,7 @@ describe('When to try to validate an token', () => {
   it('confirms auth if the correct token in header', async (done) => {
     const token = jwt.sign({ username: 'some-user' }, process.env.TOKEN_KEY, { expiresIn: '1h' });
 
-    const res = await request(app).post('/auth').set('Authorization', `Bearer ${token}`).send({});
+    const res = await testConfig.request(testConfig.app).post('/auth').set('Authorization', `Bearer ${token}`).send({});
     expect(res.statusCode).toBe(200);
     done();
   });
@@ -113,17 +103,8 @@ describe('When to try to validate an token', () => {
     const wrongKey = 'wrong-token-key';
     const token = jwt.sign({ username: 'some-user' }, wrongKey, { expiresIn: '1h' });
 
-    const res = await request(app).post('/auth').set('Authorization', `Bearer ${token}`).send({});
+    const res = await testConfig.request(testConfig.app).post('/auth').set('Authorization', `Bearer ${token}`).send({});
     expect(res.statusCode).toBe(401);
     done();
   });
-});
-
-afterEach(async () => {
-  await User.collection.remove({});
-});
-
-afterAll(async () => {
-  await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
 });

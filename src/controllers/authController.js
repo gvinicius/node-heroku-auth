@@ -37,7 +37,6 @@ auth.proctectRoute = function (req, res, next) {
       else if (user === null) {
         bcrypt.hash(password, saltRounds).then((hash) => {
           User.collection.create({ username, password: hash }).then((newUser) => {
-            console.log('ok');
             res.status(200).json({ token: auth.generateToken(newUser.username) });
           }).catch((err) => {
             if (err.name == 'ValidationError') {

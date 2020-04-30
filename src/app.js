@@ -1,5 +1,5 @@
 const express = require('express');
-const db = require('../db/db.js');
+require('dotenv').config();
 
 const app = express();
 const bodyParser = require('body-parser');
@@ -7,7 +7,6 @@ const compression = require('compression');
 
 const auth = require('./controllers/authController.js');
 
-db.start();
 app.use(compression());
 app.use(bodyParser.json());
 
