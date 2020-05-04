@@ -2,7 +2,16 @@
 
 This application is jwt auth based on heroku node example, for being used as auth and payload storage for many microservice-architectural apps
 
-Configure install nodemon for hot reload express:
+Fill the .env file for production and .env.development according to your targeted environment
+variables.
+
+Node version: 12.3.0
+Npm version: 6.13.7
+
+Install packages:
+$ npm i
+
+Run nodemon for hot reload express:
     $ npm install nodemon -g
 
 Configure mongo:

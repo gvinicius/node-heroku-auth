@@ -8,7 +8,7 @@ const auth = {};
 const mongoose = require('mongoose');
 
 auth.generateToken = function (username) {
-  return jwt.sign({ username }, process.env.TOKEN_KEY, { expiresIn: '1h' });
+  return jwt.sign({ username }, process.env.TOKEN_KEY, { expiresIn: '24h' });
 };
 
 auth.proctectRoute = function (req, res, next) {

@@ -23,7 +23,7 @@ testConfig.config = function () {
   });
 
   afterEach(async () => {
-    await User.collection.remove({});
+    await User.collection.deleteMany({});
   });
 
   afterAll(async () => {

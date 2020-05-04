@@ -92,7 +92,7 @@ describe('When to try to validate an token', () => {
   });
 
   it('confirms auth if the correct token in header', async (done) => {
-    const token = jwt.sign({ username: 'some-user' }, process.env.TOKEN_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ username: 'some-user' }, process.env.TOKEN_KEY, { expiresIn: '24h' });
 
     const res = await testConfig.request(testConfig.app).post('/auth').set('Authorization', `Bearer ${token}`).send({});
     expect(res.statusCode).toBe(200);
@@ -101,7 +101,7 @@ describe('When to try to validate an token', () => {
 
   it('confirms auth if the correct token in header', async (done) => {
     const wrongKey = 'wrong-token-key';
-    const token = jwt.sign({ username: 'some-user' }, wrongKey, { expiresIn: '1h' });
+    const token = jwt.sign({ username: 'some-user' }, wrongKey, { expiresIn: '24h' });
 
     const res = await testConfig.request(testConfig.app).post('/auth').set('Authorization', `Bearer ${token}`).send({});
     expect(res.statusCode).toBe(401);
