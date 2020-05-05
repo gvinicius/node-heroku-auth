@@ -11,66 +11,66 @@ const testConfig = require('../../testConfig.js');
 const saltRounds = 10;
 testConfig.config();
 const password = 'some-pass';
-const username = 'some-user';
+const email = 'someuser@somemail.com';
 
 describe('When to create an user', () => {
   it('creates normally with the correct params', async (done) => {
     await bcrypt.hash(password, saltRounds).then((hash) => {
-      User.collection.create({ username, password: hash }).then((newUser) => {
+      User.collection.create({ email, password: hash }).then((newUser) => {
         expect(newUser.id).toBeTruthy();
         done();
       });
     });
   });
 
-  it('does not create a user without username', async (done) => {
-    const username = '';
+  it('does not create a user without email', async (done) => {
+    const email = '';
 
     await bcrypt.hash(password, saltRounds).then((hash) => {
-      User.collection.create({ username, password: hash }).then((newUser) => {null}).catch((err) => {
-        expect(err.errors.username.message).toBe("Path `username` is required.");
+      User.collection.create({ email, password: hash }).then((newUser) => {null}).catch((err) => {
+        expect(err.errors.email.message).toBe("Path `email` is required.");
         done();
       });
     });
   });
 
-  it('does not create a user with a too small username', async (done) => {
-    const username = 'tiny';
+  it('does not create a user with email in not valid format', async (done) => {
+    const email = 't@a.a';
 
     await bcrypt.hash(password, saltRounds).then((hash) => {
-      User.collection.create({ username, password: hash }).then((newUser) => {null}).catch((err) => {
-        expect(err.errors.username.message).toBe('Minimum is 6 characters');
+      User.collection.create({ email, password: hash }).then((newUser) => {null}).catch((err) => {
+        expect(err.errors.email.message).toBe('Please fill a valid email address');
         done();
       });
     });
   });
 
-  it('does not create a user with a too long username', async (done) => {
-    const username = 'some-large-username-larger-than-60-chars-because-life-is-that';
+  it('does not create a user with a too long email', async (done) => {
+    const email = 'some-large-email-larger-than-60-chars-because-life-is-that@email.com';
 
     await bcrypt.hash(password, saltRounds).then((hash) => {
-      User.collection.create({ username, password: hash }).then((newUser) => {null}).catch((err) => {
-        expect(err.errors.username.message).toBe('Maximum is 60 characters');
+      User.collection.create({ email, password: hash }).then((newUser) => {null}).catch((err) => {
+        expect(err.errors.email.message).toBe('Maximum is 60 characters');
         done();
       });
     });
   });
 
-  it('does not create a user with a duplicate username', async (done) => {
+  it('does not create a user with a duplicate email', async (done) => {
     await bcrypt.hash(password, saltRounds).then((hash) => {
-      User.collection.create({ username, password: hash }).then((newUser) => { });
-      User.collection.create({ username, password: hash }).then((newUser) => {null}).catch((err) => {
+      User.collection.create({ email, password: hash }).then((newUser) => { });
+      User.collection.create({ email, password: hash }).then((newUser) => {null}).catch((err) => {
         console.log(err)
-        expect(err.toString()).toBe('MongoError: E11000 duplicate key error collection: livepoetry.collections index: username_1 dup key: { : "some-user" }');
+        expect(err.toString()).toBe('MongoError: E11000 duplicate key error collection: livepoetry.collections index: email_1 dup key: { : "someuser@somemail.com" }');
         done();
       });
     });
   });
 
   it('does not create a user without password', async (done) => {
-    const username = 'some-user';
+    const email = 'some-user';
 
-    User.collection.create({ username, password: null }).then((newUser) => {null}).catch((err) => {
+    User.collection.create({ email, password: null }).then((newUser) => {null}).catch((err) => {
       expect(err.errors.password.message).toBe("Path `password` is required.");
       done();
     });

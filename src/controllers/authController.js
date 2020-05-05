@@ -7,12 +7,12 @@ const auth = {};
 
 const mongoose = require('mongoose');
 
-auth.generateToken = function (username) {
-  return jwt.sign({ username }, process.env.TOKEN_KEY, { expiresIn: '24h' });
+auth.generateToken = function (email) {
+  return jwt.sign({ email }, process.env.TOKEN_KEY, { expiresIn: '24h' });
 };
 
 auth.proctectRoute = function (req, res, next) {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   if (req.headers.authorization) {
     const token = (req.headers.authorization || '').replace('Bearer ', '');
@@ -21,26 +21,26 @@ auth.proctectRoute = function (req, res, next) {
         res.status(401).json({ err });
       }
       else {
-        res.status(200).json({ username: decoded.username });
+        res.status(200).json({ email: decoded.email });
       }
     });
   }
-  else if (!username || !password) {
-    res.status(401).json({ err: 'Missing token, username and passowrd for auth' });
+  else if (!email || !password) {
+    res.status(401).json({ err: 'Missing token, email and passowrd for auth' });
   }
   else {
     User.collection.createCollection();
-    User.collection.findOne({ username }).exec((err, user) => {
+    User.collection.findOne({ email }).exec((err, user) => {
       if (err) {
         res.status(401).json({ err });
       }
       else if (user === null) {
         bcrypt.hash(password, saltRounds).then((hash) => {
-          User.collection.create({ username, password: hash }).then((newUser) => {
-            res.status(200).json({ token: auth.generateToken(newUser.username) });
+          User.collection.create({ email, password: hash }).then((newUser) => {
+            res.status(200).json({ token: auth.generateToken(newUser.email) });
           }).catch((err) => {
             if (err.name == 'ValidationError') {
-              res.status(422).json({ err: err.errors.username.message });
+              res.status(422).json({ err: err.errors.email.message });
             }
             else {
               res.status(500).json(err);
@@ -51,10 +51,10 @@ auth.proctectRoute = function (req, res, next) {
       else {
         bcrypt.compare(password, user.password).then((result) => {
           if (result === true) {
-            res.status(200).json({ token: auth.generateToken(user.username) });
+            res.status(200).json({ token: auth.generateToken(user.email) });
           }
           else {
-            res.status(401).json({ err: 'Incorrect password or username' });
+            res.status(401).json({ err: 'Incorrect password or email' });
           }
         });
       }
@@ -63,7 +63,7 @@ auth.proctectRoute = function (req, res, next) {
 };
 
 auth.confirmAuth = function (req, res, next) {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
   res.send('OK');
 };
 
