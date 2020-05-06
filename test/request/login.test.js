@@ -16,6 +16,7 @@ const saltRounds = 10;
 
 const testConfig = require('../../testConfig.js');
 testConfig.config();
+
 const { email, password } = { email: 'someone@email.com', password: 'some-passs' };
 
 describe('When to process auth to create an user', () => {
@@ -24,7 +25,6 @@ describe('When to process auth to create an user', () => {
       email,
       password
     });
-    console.log(res.body)
     expect(res.statusCode).toBe(200);
     expect(res.body.token).toBeTruthy();
     done();

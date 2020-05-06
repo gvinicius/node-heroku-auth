@@ -7,10 +7,6 @@ const auth = {};
 
 const mongoose = require('mongoose');
 
-auth.generateToken = function (email) {
-  return jwt.sign({ email }, process.env.TOKEN_KEY, { expiresIn: '24h' });
-};
-
 auth.proctectRoute = function (req, res, next) {
   if (req.headers.authorization) {
     const token = (req.headers.authorization || '').replace('Bearer ', '');
