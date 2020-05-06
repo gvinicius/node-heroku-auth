@@ -12,8 +12,6 @@ auth.generateToken = function (email) {
 };
 
 auth.proctectRoute = function (req, res, next) {
-  const { email, password } = req.body;
-
   if (req.headers.authorization) {
     const token = (req.headers.authorization || '').replace('Bearer ', '');
     jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
@@ -25,46 +23,9 @@ auth.proctectRoute = function (req, res, next) {
       }
     });
   }
-  else if (!email || !password) {
-    res.status(401).json({ err: 'Missing token, email and passowrd for auth' });
-  }
   else {
-    User.collection.createCollection();
-    User.collection.findOne({ email }).exec((err, user) => {
-      if (err) {
-        res.status(401).json({ err });
-      }
-      else if (user === null) {
-        bcrypt.hash(password, saltRounds).then((hash) => {
-          User.collection.create({ email, password: hash }).then((newUser) => {
-            res.status(200).json({ token: auth.generateToken(newUser.email) });
-          }).catch((err) => {
-            if (err.name == 'ValidationError') {
-              res.status(422).json({ err: err.errors.email.message });
-            }
-            else {
-              res.status(500).json(err);
-            }
-          });
-        });
-      }
-      else {
-        bcrypt.compare(password, user.password).then((result) => {
-          if (result === true) {
-            res.status(200).json({ token: auth.generateToken(user.email) });
-          }
-          else {
-            res.status(401).json({ err: 'Incorrect password or email' });
-          }
-        });
-      }
-    });
+    res.status(401).json({ err: 'Missing token'});
   }
-};
-
-auth.confirmAuth = function (req, res, next) {
-  const { email, password } = req.body;
-  res.send('OK');
 };
 
 module.exports = auth;
