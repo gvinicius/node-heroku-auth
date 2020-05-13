@@ -87,3 +87,31 @@ describe('When to process to signin an user', () => {
     done();
   });
 });
+
+describe('When to process user verification', () => {
+  const verificationToken = 'f62e0909-bc8f-4721-902d-257f15d57fc8';
+
+  it('does not updated isVerified for the targeted user', async (done) => {
+    const wrongToken = 'some-totally-wrong-token';
+    await bcrypt.hash(password, saltRounds).then((hash) => {
+      User.collection.create({ email, password: hash, verificationToken});
+    });
+
+    const res = await testConfig.request(testConfig.app).get('/verify_user?verificationToken=' + wrongToken).send();
+    expect(res.statusCode).toBe(404);
+    expect(res.body).toBeTruthy();
+    done();
+  });
+
+  it('updates isVerified for the targeted user', async (done) => {
+    await bcrypt.hash(password, saltRounds).then((hash) => {
+      User.collection.create({ email, password: hash, verificationToken});
+    });
+
+    const res = await testConfig.request(testConfig.app).get('/verify_user?verificationToken=' + verificationToken).send();
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toBeTruthy();
+    done();
+  });
+
+});

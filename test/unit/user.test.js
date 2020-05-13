@@ -18,6 +18,10 @@ describe('When to create an user', () => {
     await bcrypt.hash(password, saltRounds).then((hash) => {
       User.collection.create({ email, password: hash }).then((newUser) => {
         expect(newUser.id).toBeTruthy();
+        expect(newUser.createdAt).toBeTruthy();
+        expect(newUser.updatedAt).toBeTruthy();
+        expect(newUser.verificationToken).toBeTruthy();
+        expect(newUser.isVerified).toBe(false);
         done();
       });
     });

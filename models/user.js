@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 
 const User = {};
 
 const validateEmail = function(email) {
-    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    return re.test(email)
+  var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  return re.test(email)
 };
 
 User.schema = new mongoose.Schema(
@@ -29,9 +30,26 @@ User.schema = new mongoose.Schema(
     createdAt: {
       type: Date,
       default: Date.now()
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now()
+    },
+    isVerified: {
+      type: Boolean,
+      default: false
+    },
+    verificationToken: {
+      type: String,
+      default: uuidv4()
     }
   }
 );
+
+User.schema.pre('save', function(next) {
+  this.updated = Date.now();
+  return next();
+});
 
 User.collection = mongoose.model('collection', User.schema);
 

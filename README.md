@@ -1,13 +1,14 @@
 # Node Heroku Auth
 
-This application is jwt auth based on heroku node example, for being used as auth and payload storage for many microservice-architectural apps
+This application is jwt auth based on heroku node example, for being used as auth and stories payload
+storage for many microservice-architectural apps
 
 Fill the .env file for production and .env.development according to your targeted environment
 variables.
 
 Node version: 12.3.0
 
-Npm version: 6.13.7
+Npm version: 6.14.5
 
 Install packages:
     $ npm i
@@ -21,10 +22,10 @@ Run tests with jest using the following command:
 Run linter:
     $ npm run-script lint
 
-Configure mongo:
+Configure mongo. Docker alpine container suggested:
     $ docker run -d --name mongo -p 27017:27017 \
 	  -v /somewhere/onmyhost/mydatabase:/data/db \
 	  mvertes/alpine-mongo
 
-To use the mongo shell client:
+If you need, to use the mongo shell client:
     $ docker exec -ti mongo mongo
