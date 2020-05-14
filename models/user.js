@@ -42,6 +42,12 @@ User.schema = new mongoose.Schema(
     verificationToken: {
       type: String,
       default: uuidv4()
+    },
+    passwordResetToken: {
+      type: String
+    },
+    payload: {
+      type: String
     }
   }
 );

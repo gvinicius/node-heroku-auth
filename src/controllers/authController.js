@@ -15,7 +15,7 @@ auth.proctectRoute = function (req, res, next) {
         res.status(401).json({ err });
       }
       else {
-        res.status(200).json({ email: decoded.email });
+        next();
       }
     });
   }

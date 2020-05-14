@@ -34,11 +34,11 @@ describe('When to try to validate an token', () => {
     done();
   });
 
-  it('confirms auth if the correct token in header', async (done) => {
+  it('confirms auth and pass to an empty page, but does not unathorize', async (done) => {
     const token = jwt.sign({ email: 'some-user@email.com' }, process.env.TOKEN_KEY, { expiresIn: '24h' });
 
     const res = await testConfig.request(testConfig.app).post('/auth').set('Authorization', `Bearer ${token}`).send({});
-    expect(res.statusCode).toBe(200);
+    expect(res.statusCode).toBe(404);
     done();
   });
 });
