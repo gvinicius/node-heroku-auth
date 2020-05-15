@@ -18,8 +18,8 @@ login.signup = function (req, res) {
     else if (user === null) {
       bcrypt.hash(password, saltRounds).then((hash) => {
         User.collection.create({ email, password: hash }).then((newUser) => {
-          // Send email confirmation
-          res.status(200).json({ token: tokenHelper.generateToken(newUser.email) });
+          // confirmationMail
+          res.status(200).json({ token: tokenHelper.generateToken(newUser.email), id: newUser._id });
         }).catch((err) => {
           if (err.name == 'ValidationError') {
             res.status(422).json({ err: err.errors.email.message });
@@ -39,7 +39,7 @@ login.signin = function (req, res) {
   User.collection.findOne({ email }).exec((err, user) => {
     bcrypt.compare(password, user.password).then((result) => {
       if (result === true) {
-        res.status(200).json({ token: tokenHelper.generateToken(user.email) });
+        res.status(200).json({ token: tokenHelper.generateToken(user.email), id: user._id });
       }
       else {
         res.status(401).json({ err: 'Incorrect password or email' });
@@ -53,17 +53,27 @@ login.verifyUser = function (req, res) {
 
   User.collection.findOneAndUpdate({ verificationToken }, { isValidated: true }, { upsert: false }, function(err, user) {
     if(user !== null) {
-      res.status(200).json({ err: 'User verfied successfully' });
+    res.status(200).json({ err: 'User verfied successfully' });
     } else {
       res.status(404).json({ err: 'User does not exist' });
     }
   }).catch((err) => {
-    if (err.name == 'ValidationError') {
+      res.status(500).json(err);
+  });
+};
+
+login.recoveryMailPassword = function (req, res) {
+  const { id } = req.query;
+
+  User.collection.findOneAndUpdate({ _id: id }, { isValidated: true }, { upsert: false }).then((user) => {
+    if(user !== null) {
+      // resetMail
+      res.status(200).json({ result: 'Reset password email has been sent' });
+    } else {
       res.status(404).json({ err: 'User does not exist' });
     }
-    else {
-      res.status(500).json(err);
-    }
+  }).catch((err) => {
+    res.status(500).json(err);
   });
 };
 

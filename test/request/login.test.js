@@ -27,6 +27,7 @@ describe('When to process auth to create an user', () => {
     });
     expect(res.statusCode).toBe(200);
     expect(res.body.token).toBeTruthy();
+    expect(res.body.id).toBeTruthy();
     done();
   });
 

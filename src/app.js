@@ -16,8 +16,12 @@ app.post('/auth', async (req, res, next) => auth.proctectRoute(req, res, next));
 app.post('/signup', async (req, res) => login.signup(req, res));
 app.post('/signin', async (req, res) => login.signin(req, res));
 app.get('/verify_user', async (req, res, next) => login.verifyUser(req, res));
+app.get('/recovery_mail_password/:id', async (req, res, next) => login.recoveryMailPassword(req, res));
 app.put('/user/:id', async (req, res, next) => auth.proctectRoute(req, res, next));
 app.put('/user/:id', async (req, res) => users.update(req, res));
 app.get('/user/is_available', async (req, res) => users.isAvailable(req, res));
+app.get('/user/:id', async (req, res, next) => auth.proctectRoute(req, res, next));
+app.get('/user/:id', async (req, res) => users.show(req, res));
+app.put('/users/reset_password', async (req, res) => users.resetPassword(req, res));
 
 module.exports = app;
