@@ -1,7 +1,9 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../../models/user.js');
+const emailSender = require('../../services/emailSender.js');
 const tokenHelper = require('../helpers/tokenHelper.js');
+const { v4: uuidv4 } = require('uuid');
 
 const saltRounds = 10;
 const login = {};
@@ -18,7 +20,9 @@ login.signup = function (req, res) {
     else if (user === null) {
       bcrypt.hash(password, saltRounds).then((hash) => {
         User.collection.create({ email, password: hash }).then((newUser) => {
-          // confirmationMail
+          if(process.env.NODE_ENV === 'production') {
+            emailSender.run('Confirm your account', 'Access the link to validate your user:' + APP_HOSTNAME + '/verify_user?verificationToken=' +  newUser.verificationToken, newUser.email);
+          }
           res.status(200).json({ token: tokenHelper.generateToken(newUser.email), id: newUser._id });
         }).catch((err) => {
           if (err.name == 'ValidationError') {
@@ -64,10 +68,13 @@ login.verifyUser = function (req, res) {
 
 login.recoveryMailPassword = function (req, res) {
   const { id } = req.query;
+  const resetToken = uuidv4();
 
-  User.collection.findOneAndUpdate({ _id: id }, { isValidated: true }, { upsert: false }).then((user) => {
+  User.collection.findOneAndUpdate({ _id: id }, { passwordResetToken: resetToken }, { upsert: false }).then((user) => {
     if(user !== null) {
-      // resetMail
+      if(process.env.NODE_ENV === 'production') {
+        emailSender.run('Reset password code', 'Your reset code is : ' + user.resetToken, user.email);
+      }
       res.status(200).json({ result: 'Reset password email has been sent' });
     } else {
       res.status(404).json({ err: 'User does not exist' });

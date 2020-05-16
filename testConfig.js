@@ -19,6 +19,7 @@ process.env = { TOKEN_KEY: 'SOME-KEY' };
 
 testConfig.config = function () {
   beforeAll(async () => {
+    require('dotenv').config();
     testConfig.db.start();
   });
 

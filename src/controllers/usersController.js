@@ -35,7 +35,6 @@ users.isAvailable = function (req, res) {
   const { email } = req.query;
 
   User.collection.findOne({ email }, function(err, user) {
-    console.log(user)
     if(user !== null) {
       res.status(200).json({ isAvailable: 'false' });
     } else {
@@ -50,7 +49,6 @@ users.show = function (req, res) {
   const id = new ObjectId(req.params.id);
 
   User.collection.findOne({ _id: id }, function(err, user) {
-    console.log(user)
     if(user !== null) {
       res.status(200).json({ user });
     } else {
