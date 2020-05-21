@@ -8,13 +8,15 @@ const mongoose = require('mongoose');
 
 const db = {};
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/livepoetry', { useNewUrlParser: true });
+db.connection = () => {
+  mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/livepoetry', {
+    useNewUrlParser: true
+  })
+}
 
 db.start = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/livepoetry', {
-      useNewUrlParser: true
-    });
+    await db.connection();
   }
   catch (e) {
     console.log(e);

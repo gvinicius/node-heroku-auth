@@ -21,7 +21,7 @@ login.signup = function (req, res) {
       bcrypt.hash(password, saltRounds).then((hash) => {
         User.collection.create({ email, password: hash }).then((newUser) => {
           if(process.env.NODE_ENV === 'production') {
-            emailSender.run('Confirm your account', 'Access the link to validate your user:' + APP_HOSTNAME + '/verify_user?verificationToken=' +  newUser.verificationToken, newUser.email);
+            emailSender.run('Confirm your account', 'Copy link and access the link on your browser to validate your user: ' + APP_HOSTNAME + '/verify_user?verificationToken=' +  newUser.verificationToken, newUser.email);
           }
           res.status(200).json({ token: tokenHelper.generateToken(newUser.email), id: newUser._id });
         }).catch((err) => {

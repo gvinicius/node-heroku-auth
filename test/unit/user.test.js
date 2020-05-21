@@ -64,7 +64,7 @@ describe('When to create an user', () => {
     await bcrypt.hash(password, saltRounds).then((hash) => {
       User.collection.create({ email, password: hash }).then((newUser) => { });
       User.collection.create({ email, password: hash }).then((newUser) => {null}).catch((err) => {
-        expect(err.toString()).toBe('MongoError: E11000 duplicate key error collection: livepoetry.collections index: email_1 dup key: { : "someuser@somemail.com" }');
+        expect(err.toString()).toBe('MongoError: E11000 duplicate key error collection: livepoetry.users index: email_1 dup key: { : "someuser@somemail.com" }');
         done();
       });
     });

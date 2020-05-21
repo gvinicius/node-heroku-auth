@@ -22,13 +22,16 @@ emailSender.run = function(subject, body, receiver) {
           "TextPart": body
         }
       ]
-    })
+    });
+  console.log(1)
   request
     .then((result) => {
+      console.log(2)
       return true;
     })
     .catch((err) => {
-      return error;
+      console.log(err)
+      return 'error';
     })
 }
 
